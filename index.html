@@ -26,39 +26,33 @@
       const searchError = document.querySelector("#search-error");
 
       // define functions---------------------------------------------------------------------------------------
-      const searchGIPHY = function (searchTerm) {
-        fetch(
-          `https://api.giphy.com/v1/gifs/translate?api_key=2P9yF9f9KCF49djgDWOEZhri39ARheLH&s=${searchTerm}`,
-          { mode: "cors" }
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (response) {
-            img.src = response.data.images.original.url;
-          })
-          .catch(function (err) {
-            console.error(err);
-            img.src = "#";
-            searchError.textContent = "Error";
-          });
+
+      const searchGIPHY = async function (searchTerm) {
+        try {
+          const response = await fetch(
+            `https://api.giphy.com/v1/gifs/translate?api_key=2P9yF9f9KCF49djgDWOEZhri39ARheLH&s=${searchTerm}`,
+            { mode: "cors" }
+          );
+          const searchObject = await response.json();
+          img.src = searchObject.data.images.original.url;
+        } catch (error) {
+          console.error(error);
+          img.src = "#";
+          searchError.textContent = "Error";
+        }
       };
 
       const randomInt = function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       };
 
-      const fetchRandomTrendingGIF = function () {
-        fetch(
+      const fetchRandomTrendingGIF = async function () {
+        const response = await fetch(
           `https://api.giphy.com/v1/gifs/trending?api_key=2P9yF9f9KCF49djgDWOEZhri39ARheLH`,
           { mode: "cors" }
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (response) {
-            img.src = response.data[randomInt(0, 49)].images.original.url;
-          });
+        );
+        const trendingObject = await response.json();
+        img.src = trendingObject.data[randomInt(0, 49)].images.original.url;
       };
 
       // add event listeners---------------------------------------------------------------------
