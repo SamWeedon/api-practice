@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="#" />
+    <button id="new-image-button">Random Trending GIF</button>
+    <input type="search" placeholder="Search GIPHY" />
+    <span id="search-error"></span>
+    <button id="search-button">Go</button>
+    <script>
+      // reference DOM elements---------------------------------------------------------------------------------
+      const img = document.querySelector("img");
+      const newImageButton = document.querySelector("#new-image-button");
+      const searchBar = document.querySelector("input");
+      const searchButton = document.querySelector("#search-button");
+      const searchError = document.querySelector("#search-error");
+
+      // define functions---------------------------------------------------------------------------------------
+      const searchGIPHY = function (searchTerm) {
+        fetch(
+          `https://api.giphy.com/v1/gifs/translate?api_key=2P9yF9f9KCF49djgDWOEZhri39ARheLH&s=${searchTerm}`,
+          { mode: "cors" }
+        )
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (response) {
+            img.src = response.data.images.original.url;
+          })
+          .catch(function (err) {
+            console.error(err);
+            img.src = "#";
+            searchError.textContent = "Error";
+          });
+      };
+
+      const randomInt = function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      };
+
+      const fetchRandomTrendingGIF = function () {
+        fetch(
+          `https://api.giphy.com/v1/gifs/trending?api_key=2P9yF9f9KCF49djgDWOEZhri39ARheLH`,
+          { mode: "cors" }
+        )
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (response) {
+            img.src = response.data[randomInt(0, 49)].images.original.url;
+          });
+      };
+
+      // add event listeners---------------------------------------------------------------------
+      newImageButton.addEventListener("click", () => fetchRandomTrendingGIF());
+
+      searchButton.addEventListener("click", () =>
+        searchGIPHY(searchBar.value)
+      );
+
+      // set default GIF-------------------------------------------------------------------------
+      fetchRandomTrendingGIF();
+    </script>
+  </body>
+</html>
